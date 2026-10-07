@@ -6,9 +6,10 @@
   "type": "module",
   "scripts": {
     "serve": "node tools/serve.mjs 8080",
-    "test": "node --test tests/dataset.test.mjs tests/logic.test.mjs tests/site.test.mjs tests/safety.test.mjs",
+    "test": "node --test tests/dataset.test.mjs tests/logic.test.mjs tests/site.test.mjs tests/safety.test.mjs tests/v2/dataset.test.mjs tests/v2/logic.test.mjs tests/v2/site.test.mjs",
     "test:links": "node tools/check-links.mjs",
-    "test:e2e": "node tests/e2e.mjs"
+    "test:e2e": "node tests/e2e.mjs",
+    "test:e2e:v2": "node tests/v2/e2e.mjs"
   },
   "license": "UNLICENSED"
 }

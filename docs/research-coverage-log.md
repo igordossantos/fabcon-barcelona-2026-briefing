@@ -79,6 +79,18 @@ IQ sharing, Salesforce Data 360 integration, on-demand billing and zero-provisio
 5. Licensing, pricing and regional availability are mostly not specified in the public sources and are not inferred.
 6. Items with status "Not specified" lack an availability label in the retrieved text.
 
+## Version 2 additions (September 2026 Fabric feature summary)
+
+The v2 dataset (`v2/data/announcements.json`) adds one catalog entry per section of the **Fabric September 2026 Feature Summary** (S10), read in a browser on 2026-10-06, plus mapping entries where an existing event-blog entry already describes the section. The mapping is `meta.septemberToc` in the dataset and is displayed on the site. Each new entry's status follows the label in the section heading, cross-checked against Microsoft Learn "What's new in Microsoft Fabric" (GA table and preview table). Differences are shown on the card, for example:
+
+- Custom SQL pools: the summary says GA; Learn lists the feature as a preview. Treated conservatively as preview.
+- Eventstream new connectors: no label in the summary headline; Learn lists them as GA.
+- Eventstream processing logs: no label in the summary headline; Learn lists related items as preview.
+
+Power BI September 2026 feature summary: only the Copilot, agentic and modeling items are cataloged; report formatting, mobile and custom-visual items are not individually cataloged.
+
+Descriptions are original summaries and may omit detail. Items with no matching Learn entry are marked "Source only" or "Not in Learn; source only".
+
 ## Link checks
 
 `tools/check-links.mjs` checks every external source and documentation link. Learn and Microsoft documentation links returned success at the last run; the community blog pages return HTTP 403 to scripts and were confirmed by opening them in a browser during research.

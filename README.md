@@ -65,6 +65,22 @@ npm run test:e2e         # search, filters, reset, expand/collapse, keyboard, re
 
 Research cutoff: October 6, 2026. See `docs/research-coverage-log.md` for sources reviewed, coverage and gaps.
 
+## Version 2 (`/v2/`)
+
+The original page at the repository root is unchanged. A second version lives in `v2/` and is published at `<site>/v2/`. It has its own `index.html`, `css/`, `js/` and `data/announcements.json`.
+
+What is different in v2:
+
+- Subtitle and wording address Zurich Insurance Group and Farmers Insurance; the hero no longer shows the presentation, cutoff and last-verified dates (they remain in Sources and methodology).
+- The Priorities and Catalog sections are merged into one list of cards. Priority items come first, then everything else; search, filter chips, selects and a sort control apply to the same cards.
+- "Where the announcements may matter" sits below the catalog.
+- Every section of the September 2026 Microsoft Fabric feature summary is cataloged as its own entry (or mapped to an existing entry when the sources describe items together). The mapping is stored in `meta.septemberToc` and shown in Sources and methodology.
+- Live-meeting tools: **Select for discussion** checkboxes, a floating **Keep selected only** button, per-item notes, Undo, export to Markdown and CSV, a share link that restores a selection, a presenter view, filter chips with live counts, and the `/` and `f` keyboard shortcuts. Selections and notes are stored only in the browser (`localStorage`); share links contain item IDs only, never notes.
+
+Tests for v2 are in `tests/v2/` (`npm test` runs them; `npm run test:e2e:v2` runs the browser test, optionally against a deployed URL with `BASE_URL`).
+
+Updating v2: edit `v2/data/announcements.json` as described below. When the September summary or Microsoft Learn changes, update the matching entry's `status`, `ver` and `septemberToc` mapping, then run `npm test`.
+
 ## Updating the briefing
 
 All content updates happen in `data/announcements.json`. No code changes are needed for ordinary updates.
