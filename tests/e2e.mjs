@@ -35,9 +35,10 @@ function findBrowser() {
 }
 
 const port = 8992 + Math.floor(Math.random() * 500);
-const server = spawn(process.execPath, [join(root, "tools/serve.mjs"), String(port)], { stdio: "ignore" });
-await new Promise((r) => setTimeout(r, 800));
-const base = `http://127.0.0.1:${port}/index.html`;
+const live = process.env.BASE_URL; // e.g. https://<user>.github.io/<repo>/ to test a deployed site
+const server = live ? null : spawn(process.execPath, [join(root, "tools/serve.mjs"), String(port)], { stdio: "ignore" });
+await new Promise((r) => setTimeout(r, live ? 0 : 800));
+const base = live ?? `http://127.0.0.1:${port}/index.html`;
 
 const results = [];
 async function check(name, fn) {
@@ -239,7 +240,7 @@ try {
   await ctx.close();
 } finally {
   await browser.close();
-  server.kill();
+  server?.kill();
 }
 
 const failed = results.filter(([ok]) => !ok).length;
