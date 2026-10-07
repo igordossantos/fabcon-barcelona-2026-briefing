@@ -79,9 +79,9 @@ IQ sharing, Salesforce Data 360 integration, on-demand billing and zero-provisio
 5. Licensing, pricing and regional availability are mostly not specified in the public sources and are not inferred.
 6. Items with status "Not specified" lack an availability label in the retrieved text.
 
-## Version 2 additions (September 2026 Fabric feature summary)
+## Current-page additions (September 2026 Fabric feature summary)
 
-The v2 dataset (`v2/data/announcements.json`) adds one catalog entry per section of the **Fabric September 2026 Feature Summary** (S10), read in a browser on 2026-10-06, plus mapping entries where an existing event-blog entry already describes the section. The mapping is `meta.septemberToc` in the dataset and is displayed on the site. Each new entry's status follows the label in the section heading, cross-checked against Microsoft Learn "What's new in Microsoft Fabric" (GA table and preview table). Differences are shown on the card, for example:
+The current dataset (`data/announcements.json`; V1 is kept in `v1/data/`) adds one catalog entry per section of the **Fabric September 2026 Feature Summary** (S10), read in a browser on 2026-10-06, plus mapping entries where an existing event-blog entry already describes the section. The mapping is `meta.septemberToc` in the dataset and is displayed on the site. Each new entry's status follows the label in the section heading, cross-checked against Microsoft Learn "What's new in Microsoft Fabric" (GA table and preview table). Differences are shown on the card, for example:
 
 - Custom SQL pools: the summary says GA; Learn lists the feature as a preview. Treated conservatively as preview.
 - Eventstream new connectors: no label in the summary headline; Learn lists them as GA.

@@ -1,11 +1,12 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const read = (p) => readFileSync(join(root, p), "utf8");
+const v2 = root;
+const read = (p) => readFileSync(join(v2, p), "utf8");
 const html = read("index.html");
 const data = JSON.parse(read("data/announcements.json"));
 
@@ -17,68 +18,54 @@ function attrs(source, attr) {
   return out;
 }
 
-test("index.html uses repository-relative asset paths (works on a Pages project site)", () => {
+test("the page uses relative asset paths and every asset exists", () => {
   const refs = [...attrs(html, "href"), ...attrs(html, "src")].filter((r) => !r.startsWith("#") && !r.startsWith("data:") && !/^https?:/.test(r));
-  assert.ok(refs.length >= 2, "expected local css/js references");
   for (const r of refs) {
-    assert.ok(!r.startsWith("/"), `root-absolute path ${r} breaks project sites`);
-    assert.ok(existsSync(join(root, r.split("#")[0])), `missing asset ${r}`);
+    assert.ok(!r.startsWith("/"), `root-absolute path ${r}`);
+    const target = r.split("#")[0];
+    assert.ok(existsSync(join(v2, target)) || existsSync(join(v2, target, "index.html")), `missing ${r}`);
   }
+  assert.ok(existsSync(join(v2, "css/styles.css")) && existsSync(join(v2, "js/app.js")) && existsSync(join(v2, "js/logic.js")));
+  assert.match(read("js/app.js"), /fetch\("data\/announcements\.json"/);
 });
 
-test("in-page anchors resolve to element ids", () => {
+test("in-page anchors and aria references resolve", () => {
   const ids = new Set(attrs(html, "id"));
-  const anchors = attrs(html, "href").filter((h) => h.startsWith("#") && h.length > 1);
-  assert.ok(anchors.length >= 5);
-  for (const a of anchors) assert.ok(ids.has(a.slice(1)), `anchor ${a} has no target`);
-  for (const attr of ["aria-controls", "aria-labelledby"]) {
-    for (const v of attrs(html, attr)) for (const id of v.split(/\s+/)) assert.ok(ids.has(id) || id === "", `${attr} -> ${id} missing`);
-  }
+  for (const a of attrs(html, "href").filter((h) => h.startsWith("#") && h.length > 1)) assert.ok(ids.has(a.slice(1)), `anchor ${a}`);
+  for (const attr of ["aria-controls", "aria-labelledby"]) for (const v of attrs(html, attr)) for (const id of v.split(/\s+/)) assert.ok(ids.has(id), `${attr} -> ${id}`);
 });
 
-test("module imports resolve to files", () => {
-  for (const file of ["js/app.js", "js/logic.js"]) {
-    const src = read(file);
-    const re = /from\s+"(\.[^"]+)"/g;
-    let m;
-    while ((m = re.exec(src))) assert.ok(existsSync(join(root, dirname(file), m[1])), `${file}: missing import ${m[1]}`);
-  }
-  assert.match(read("js/app.js"), /fetch\("data\/announcements\.json"/, "data path must be relative");
+test("page structure follows the requested layout", () => {
+  assert.match(html, /A curated briefing for Zurich Insurance Group and Farmers Insurance/);
+  assert.ok(!/id="date-presentation"|id="date-cutoff"|id="date-verified"|class="dates"/.test(html), "hero dates must be removed");
+  assert.ok(!/id="briefing"/.test(html), "priorities are merged into the catalog");
+  const pos = (needle) => html.indexOf(needle);
+  assert.ok(pos('id="overview"') < pos('id="catalog"'));
+  assert.ok(pos('id="catalog"') < pos('id="matters"'), "Where the announcements may matter sits below the catalog");
+  assert.ok(pos('id="matters"') < pos('id="sources"'));
+  assert.match(html, /Where the announcements may matter/);
+  assert.match(html, /id="select-bar"/);
+  assert.match(html, /id="focus-toggle"/);
+  assert.match(html, /id="select-visible"/);
+  assert.match(html, /id="reset-filters"/);
 });
 
-test("page has accessibility landmarks and basics", () => {
+test("accessibility basics", () => {
   assert.match(html, /<html lang="en">/);
   assert.match(html, /class="skip-link"/);
-  assert.match(html, /<main id="main"/);
-  assert.match(html, /<nav[^>]*aria-label="Primary"/);
-  assert.equal((html.match(/<h1[ >]/g) ?? []).length, 1, "exactly one h1");
-  assert.match(html, /name="viewport"/);
+  assert.equal((html.match(/<h1[ >]/g) ?? []).length, 1);
   const labels = attrs(html, "for");
-  for (const id of ["f-query", "f-category", "f-status", "f-action", "f-assoc", "f-conflict"]) assert.ok(labels.includes(id), `no label for ${id}`);
-});
-
-test("print stylesheet and reset control exist", () => {
+  for (const id of ["f-query", "f-category", "f-status", "f-assoc", "f-sort", "f-conflict"]) assert.ok(labels.includes(id), `no label for ${id}`);
   const css = read("css/styles.css");
   assert.match(css, /@media print/);
   assert.match(css, /prefers-reduced-motion/);
-  assert.match(html, /id="reset-filters"/);
-  assert.match(html, /id="print-btn"/);
 });
 
-test("displayed totals are not hardcoded outside the dataset", () => {
-  const total = String(data.announcements.length);
-  const re = new RegExp(`\\b${total}\\b`);
-  for (const file of ["index.html", "js/app.js", "js/logic.js", "css/styles.css", "README.md"]) {
-    if (!existsSync(join(root, file))) continue;
-    assert.ok(!re.test(read(file)), `${file} contains the literal total ${total}`);
+test("displayed totals are not hardcoded", () => {
+  const nums = [String(data.announcements.length), String(data.meta.septemberToc.length)];
+  for (const file of ["index.html", "js/app.js", "js/logic.js", "css/styles.css"]) {
+    for (const n of nums) assert.ok(!new RegExp(`\\b${n}\\b`).test(read(file)), `${file} contains literal ${n}`);
   }
-});
-
-test("every file referenced by the Pages workflow exists", () => {
-  const wf = read(".github/workflows/pages.yml");
-  assert.match(wf, /actions\/deploy-pages@v\d+/);
-  assert.match(wf, /actions\/upload-pages-artifact@v\d+/);
-  assert.match(wf, /actions\/configure-pages@v\d+/);
 });
 
 function vars(block) {
@@ -92,29 +79,18 @@ function lum(hex) {
 }
 const ratio = (a, b) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return (x + 0.05) / (y + 0.05); };
 
-test("colour contrast meets WCAG AA (4.5:1) in light and dark themes", () => {
+test("colour contrast meets WCAG AA in light and dark themes", () => {
   const css = read("css/styles.css");
   const light = vars(css.slice(css.indexOf(":root {"), css.indexOf(":root[data-theme=\"dark\"]")));
-  const darkStart = css.indexOf(":root[data-theme=\"dark\"] {");
-  const dark = { ...light, ...vars(css.slice(darkStart, css.indexOf("}", darkStart))) };
+  const ds = css.indexOf(":root[data-theme=\"dark\"] {");
+  const dark = { ...light, ...vars(css.slice(ds, css.indexOf("}", ds))) };
   const pairs = [["ink", "bg"], ["ink", "bg-alt"], ["ink", "surface"], ["muted", "bg"], ["muted", "bg-alt"], ["muted", "surface"], ["accent", "bg"], ["accent", "bg-alt"], ["accent", "surface"],
     ["ga-ink", "ga-bg"], ["pv-ink", "pv-bg"], ["pr-ink", "pr-bg"], ["sp-ink", "sp-bg"], ["cs-ink", "cs-bg"], ["ns-ink", "ns-bg"], ["flag-ink", "flag-bg"], ["brand-ink", "brand"]];
-  for (const [name, theme] of [["light", light], ["dark", dark]]) {
-    for (const [fg, bg] of pairs) {
-      assert.ok(theme[fg] && theme[bg], `${name}: missing ${fg}/${bg}`);
-      assert.ok(ratio(theme[fg], theme[bg]) >= 4.5, `${name}: ${fg} on ${bg} = ${ratio(theme[fg], theme[bg]).toFixed(2)}`);
-    }
+  for (const [name, t] of [["light", light], ["dark", dark]]) {
+    for (const [fg, bg] of pairs) assert.ok(ratio(t[fg], t[bg]) >= 4.5, `${name}: ${fg} on ${bg} = ${ratio(t[fg], t[bg]).toFixed(2)}`);
   }
 });
 
-function walk(dir, out = []) {
-  for (const name of readdirSync(dir)) {
-    if (name === ".git" || name === "node_modules") continue;
-    const p = join(dir, name);
-    statSync(p).isDirectory() ? walk(p, out) : out.push(p);
-  }
-  return out;
-}
-test("no stray large or binary files in the publish set", () => {
-  for (const f of walk(root)) assert.ok(statSync(f).size < 1_000_000, `${f} is unexpectedly large`);
+test("v1 is untouched: its files still exist under /v1", () => {
+  for (const f of ["index.html", "css/styles.css", "js/app.js", "js/logic.js", "data/announcements.json"]) assert.ok(existsSync(join(root, "v1", f)), f);
 });

@@ -100,16 +100,75 @@ export const VER_SHORT = {
   custom: "Partly confirmed (see card)",
 };
 
+export const TIER_LABEL = { event: "Event blog", monthly: "September update" };
+
+export const SORT_OPTIONS = [
+  ["recommended", "Recommended (priorities first)"],
+  ["category", "Workload"],
+  ["status", "Availability"],
+  ["action", "Suggested action"],
+  ["title", "Title A to Z"],
+];
+
 export function compareItems(a, b, key, dir, meta) {
-  const val = (it) => {
-    switch (key) {
-      case "action": return actionFor(it, meta);
-      case "status": return meta.statuses.indexOf(it.status);
-      case "category": return meta.categories.indexOf(it.category);
-      default: return normalize(it[key] ?? "");
+  const titleCmp = () => normalize(a.title).localeCompare(normalize(b.title));
+  const cat = (it) => meta.categories.indexOf(it.category);
+  let r = 0;
+  switch (key) {
+    case "recommended": {
+      const pa = a.priority ?? Infinity, pb = b.priority ?? Infinity;
+      r = pa === pb ? cat(a) - cat(b) : pa - pb;
+      break;
     }
-  };
-  const x = val(a), y = val(b);
-  const r = typeof x === "number" ? x - y : String(x).localeCompare(String(y));
-  return (r || normalize(a.title).localeCompare(normalize(b.title))) * (dir === "desc" ? -1 : 1);
+    case "action": r = actionFor(a, meta).localeCompare(actionFor(b, meta)); break;
+    case "status": r = meta.statuses.indexOf(a.status) - meta.statuses.indexOf(b.status); break;
+    case "category": r = cat(a) - cat(b); break;
+    default: r = titleCmp();
+  }
+  return (r || titleCmp()) * (dir === "desc" ? -1 : 1);
+}
+
+// Counts for facet chips: apply every filter except the facet being counted.
+export function facetCounts(items, filters, meta, facet, valueFn) {
+  const without = { ...filters, [facet]: EMPTY_FILTERS[facet] };
+  return countBy(filterItems(items, without, meta), valueFn);
+}
+
+export function parseShare(search) {
+  const p = new URLSearchParams(search);
+  const ids = (p.get("sel") ?? "").split(",").map((s) => s.trim()).filter((s) => /^[a-z0-9-]+$/.test(s));
+  return { ids: [...new Set(ids)], focus: p.get("focus") === "1" };
+}
+
+export function buildShareQuery(ids, focus) {
+  const p = new URLSearchParams();
+  if (ids.length) p.set("sel", ids.join(","));
+  if (focus && ids.length) p.set("focus", "1");
+  const q = p.toString().replace(/%2C/g, ",");
+  return q ? `?${q}` : "";
+}
+
+const csvCell = (v) => {
+  let s = String(v ?? "").replace(/\r?\n/g, " ");
+  if (/^[=+\-@\t]/.test(s)) s = "'" + s; // neutralise spreadsheet formulas
+  return /[",]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+};
+
+export function toCsv(items, notes, meta) {
+  const head = ["Title", "Workload", "Status", "Suggested action", "As announced", "Suggested next step", "Notes", "Sources"];
+  const rows = items.map((i) => [i.title, i.category, i.status, actionFor(i, meta), i.announced, i.next, notes[i.id] ?? "", i.src.join(" ")]);
+  return [head, ...rows].map((r) => r.map(csvCell).join(",")).join("\r\n") + "\r\n";
+}
+
+export function toMarkdown(items, notes, meta, sourceMap) {
+  const lines = [`# ${meta.title}`, "", `${meta.subtitle}`, "", `Discussion list: ${items.length} item${items.length === 1 ? "" : "s"}`, ""];
+  for (const i of items) {
+    lines.push(`## ${i.title}`, `- Workload: ${i.category}`, `- Status: ${i.status} (${actionFor(i, meta)})`, `- As announced: ${i.announced}`, `- ${meta.relevanceLabel}: ${i.relevance}`, `- Suggested next step: ${i.next}`);
+    const links = i.src.map((id) => sourceMap.get(id)).filter(Boolean).map((s) => `[${s.short}](${s.url})`);
+    if (links.length) lines.push(`- Sources: ${links.join(", ")}`);
+    if (notes[i.id]) lines.push(`- Notes: ${String(notes[i.id]).replace(/\r?\n/g, " ")}`);
+    lines.push("");
+  }
+  lines.push(`_${meta.disclaimer}_`, "");
+  return lines.join("\n");
 }

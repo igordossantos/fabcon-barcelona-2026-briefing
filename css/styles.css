@@ -233,6 +233,65 @@ ul, ol { padding-left: 1.25rem; margin: 0 0 1rem; }
 .sort-btn { font: inherit; font-weight: 700; background: none; border: 0; padding: 0.15rem 0; cursor: pointer; color: inherit; }
 .sort-btn:hover { color: var(--accent); }
 
+/* v2 additions: selection, chips, floating bar, presenter view */
+.hint { font-weight: 400; color: var(--muted); }
+.field-wide { grid-column: 1 / -1; }
+.chips { border: 0; padding: 0; margin: 0; min-width: 0; }
+.chips legend { font-size: 0.85rem; font-weight: 600; padding: 0; margin-bottom: 0.25rem; }
+.chip-row { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.chip-btn { font: inherit; cursor: pointer; background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 999px; padding: 0.35rem 0.9rem; min-height: 2.4rem; }
+.chip-btn:hover { border-color: var(--accent); }
+.chip-btn[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+:root[data-theme="dark"] .chip-btn[aria-pressed="true"] { background: var(--accent); color: #05212e; border-color: var(--accent); }
+.chip-count { opacity: 0.85; font-variant-numeric: tabular-nums; }
+.btn-primary { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600; }
+.btn-primary:hover { filter: brightness(1.15); }
+:root[data-theme="dark"] .btn-primary { background: var(--accent); color: #05212e; border-color: var(--accent); }
+
+.card-head { display: flex; flex-direction: column-reverse; align-items: stretch; gap: 0.4rem; }
+.card-head .card-top { margin-bottom: 0.2rem; }
+.card-head .select-box { align-self: flex-end; }
+.select-box { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; font-weight: 600; cursor: pointer; padding: 0.3rem 0.55rem; border: 1px solid var(--line); border-radius: 6px; background: var(--bg-alt); white-space: nowrap; min-height: 2.4rem; }
+.select-box input, .col-select input { width: 1.25rem; height: 1.25rem; accent-color: var(--brand); cursor: pointer; }
+.select-box:hover { border-color: var(--accent); }
+.card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.card.is-priority { border-top: 4px solid var(--accent); }
+.chip-priority { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); font-weight: 600; }
+:root[data-theme="dark"] .chip-priority { background: var(--accent); color: #05212e; border-color: var(--accent); }
+.card .theme { margin: 0 0 0.3rem; font-size: 0.85rem; color: var(--muted); }
+.card .relevance { margin-top: 0.4rem; }
+.card .next { font-size: 0.95rem; margin-bottom: 0.4rem; }
+.card .conflict-note { font-size: 0.88rem; }
+.card .card-links { margin-top: 0.4rem; margin-bottom: 0; }
+.notes { margin-top: 0.5rem; }
+.notes label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.2rem; }
+.notes textarea { width: 100%; font: inherit; padding: 0.45rem 0.55rem; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); resize: vertical; }
+
+.focus-banner { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between; border: 2px solid var(--accent); background: var(--surface); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1rem; }
+.focus-banner[hidden] { display: none; }
+.focus-banner p { margin: 0; }
+.site-header .btn { padding: 0.35rem 0.7rem; min-height: 2.25rem; font-size: 0.9rem; }
+.header-inner { gap: 0.5rem 0.75rem; }
+.focus-banner .small { flex-basis: 100%; }
+.focus-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.select-bar { position: fixed; left: 50%; bottom: 1rem; transform: translateX(-50%); z-index: 60; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; justify-content: center; background: var(--surface); color: var(--ink); border: 2px solid var(--accent); border-radius: 999px; padding: 0.5rem 0.75rem 0.5rem 1.1rem; box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25); max-width: calc(100vw - 1rem); }
+.select-bar[hidden] { display: none; }
+.select-bar .select-count { margin: 0; font-weight: 700; }
+body.has-select-bar { padding-bottom: 5rem; }
+.col-select { width: 2.5rem; text-align: center; }
+.compare-table tr.selected th, .compare-table tr.selected td { background: color-mix(in srgb, var(--accent) 12%, var(--surface)); }
+.col-notes { display: none; }
+.toc-details summary { cursor: pointer; font-weight: 600; margin-bottom: 0.75rem; }
+.toc-details .table-wrap { max-height: 28rem; overflow: auto; }
+#catalog[data-view="table"] .select-box { display: none; }
+
+/* Presenter view: larger type, fewer details, for use on a shared screen */
+html.present { font-size: 118%; }
+html.present .card .product, html.present .card .meta-line, html.present .expand-btn, html.present .panel, html.present .card .conflict-note { display: none; }
+html.present .card-grid { grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); }
+html.present .select-box { font-size: 1rem; }
+
 /* Footer */
 .site-footer { background: var(--brand); color: #e6eef4; padding: 2rem 0; }
 .site-footer .small { color: #b8c9d6; }
@@ -253,7 +312,12 @@ ul, ol { padding-left: 1.25rem; margin: 0 0 1rem; }
   :root, :root[data-theme="dark"] { --bg: #fff; --bg-alt: #f3f3f3; --surface: #fff; --ink: #000; --muted: #333; --line: #999; --accent: #00395a; --shadow: none; }
   html { font-size: 90%; }
   body { background: #fff; color: #000; }
-  .site-header, .skip-link, .toolbar, .results-bar, .nav-toggle, .tile, .hero .stat-tiles button, #empty-state, .link-btn.noprint, .expand-btn { display: none !important; }
+  .site-header, .skip-link, .toolbar, .results-bar, .nav-toggle, .tile, .hero .stat-tiles button, #empty-state, .link-btn.noprint, .expand-btn, .select-bar, .col-select, .toc-details { display: none !important; }
+  .col-notes { display: table-cell !important; min-width: 8rem; }
+  .focus-banner { border: 1px solid #000; }
+  .focus-actions { display: none; }
+  html.present { font-size: 90%; }
+  body.has-select-bar { padding-bottom: 0; }
   .hero { background: none; padding: 0 0 1rem; border: 0; }
   .section { padding: 1rem 0; break-inside: auto; }
   .section.alt { background: none; border: 0; }

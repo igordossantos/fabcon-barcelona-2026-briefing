@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>FabCon Barcelona 2026 | Data, Analytics &amp; AI Briefing</title>
-  <meta name="description" content="A curated briefing of FabCon Europe / SQLCon Barcelona 2026 and September 2026 Microsoft Fabric announcements for Zurich Insurance Group and Farmers Insurance, with verified availability status and source links.">
+  <meta name="description" content="A curated briefing of FabCon Europe / SQLCon Barcelona 2026 announcements for Farmers Insurance, with verified availability status and source links.">
   <meta name="robots" content="noindex, nofollow">
   <meta name="color-scheme" content="light dark">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230b3a53'/%3E%3Cpath d='M8 22V10h10v3h-6.5v2H17v3h-5.5v4z' fill='%23fff'/%3E%3C/svg%3E">
@@ -13,7 +13,6 @@
     try {
       var saved = localStorage.getItem("theme");
       if (saved === "dark" || saved === "light") document.documentElement.setAttribute("data-theme", saved);
-      if (localStorage.getItem("fabcon-v2-present") === "1") document.documentElement.classList.add("present");
     } catch (e) {}
   </script>
 </head>
@@ -30,15 +29,14 @@
       <nav id="site-nav" class="site-nav" aria-label="Primary">
         <ul>
           <li><a href="#overview">Overview</a></li>
-          <li><a href="#catalog">Priorities &amp; catalog</a></li>
-          <li><a href="#matters">Where it may matter</a></li>
+          <li><a href="#briefing">Priorities</a></li>
+          <li><a href="#catalog">Catalog</a></li>
           <li><a href="#sources">Sources &amp; method</a></li>
         </ul>
       </nav>
       <div class="header-actions">
-        <button class="btn btn-quiet" type="button" id="present-toggle" aria-pressed="false">Presenter view</button>
         <button class="btn btn-quiet" type="button" id="theme-toggle" aria-pressed="false">Dark theme</button>
-        <button class="btn btn-quiet" type="button" id="print-btn">Print</button>
+        <button class="btn btn-quiet" type="button" id="print-btn">Print handout</button>
       </div>
     </div>
   </header>
@@ -48,8 +46,13 @@
       <div class="wrap">
         <p class="eyebrow" id="event-line">FabCon Europe / SQLCon Barcelona 2026 · September 28 – October 1, 2026</p>
         <h1 id="page-title">FabCon Barcelona 2026 | Data, Analytics &amp; AI Briefing</h1>
-        <p class="subtitle" id="page-subtitle">A curated briefing for Zurich Insurance Group and Farmers Insurance</p>
+        <p class="subtitle" id="page-subtitle">A curated briefing for Farmers Insurance</p>
         <p class="presenter" id="presenter">Igor Dos Santos | Cloud and AI Solutions Engineer, Microsoft</p>
+        <dl class="dates" aria-label="Research dates">
+          <div><dt>Presentation</dt><dd id="date-presentation">October 7, 2026</dd></div>
+          <div><dt>Research cutoff</dt><dd id="date-cutoff"></dd></div>
+          <div><dt>Last verified</dt><dd id="date-verified"></dd></div>
+        </dl>
         <noscript><p class="notice">This briefing renders its catalog with JavaScript from <code>data/announcements.json</code>. Enable JavaScript to view it.</p></noscript>
         <ul class="stat-tiles" id="stat-tiles" aria-label="Catalog summary"></ul>
         <p class="disclaimer-inline" id="disclaimer-top"></p>
@@ -59,7 +62,7 @@
     <section id="overview" class="section" aria-labelledby="overview-title">
       <div class="wrap">
         <h2 id="overview-title">Executive overview</h2>
-        <p class="lede">Announcements at the event center on one idea: AI experiences are only as useful as the governed data, shared business definitions and operational controls underneath them. Six themes recur across the sources, and the catalog below also lists every section of the September 2026 Microsoft Fabric feature summary.</p>
+        <p class="lede">Announcements at the event center on one idea: AI experiences are only as useful as the governed data, shared business definitions and operational controls underneath them. Six themes recur across the sources.</p>
         <ol class="themes">
           <li><h3>Trusted context for Copilot and agents</h3><p>Fabric IQ brings governed Power BI semantic models and business definitions into Microsoft Copilot, data agents and ontologies, so answers reuse measures the organization already certifies.</p></li>
           <li><h3>From reports to applications</h3><p>Agentic app creation in Power BI Desktop and Fabric Apps aim to turn insight into workflows with write-back on governed data. Several parts are still preview or coming soon.</p></li>
@@ -75,15 +78,31 @@
       </div>
     </section>
 
-    <section id="catalog" class="section alt" aria-labelledby="catalog-title" data-view="cards">
+    <section id="briefing" class="section alt" aria-labelledby="briefing-title">
       <div class="wrap">
-        <h2 id="catalog-title">Priorities and complete catalog</h2>
-        <p class="lede">Every announcement is a card. Priority items come first. Search, filter and sort, then tick <strong>Select for discussion</strong> on what is relevant, and use the floating button to keep only those items. Each “<span id="relevance-label-inline">Potential relevance</span>” statement is a suggested use case, not a statement about either organization’s environment, and no savings, ROI, performance or compliance outcome is claimed.</p>
+        <h2 id="briefing-title">Priorities for Farmers Insurance</h2>
+        <p class="lede">A curated shortlist from the full catalog. Each “Potential relevance for Farmers Insurance” statement is a suggested use case only. It is not a statement about Farmers’ environment, systems, projects or adoption, and no savings, ROI, performance or compliance outcome is claimed.</p>
+        <div class="priority-grid" id="priority-grid"></div>
 
-        <form class="toolbar" id="toolbar" role="search" aria-label="Search, filter and sort announcements" autocomplete="off">
+        <h3 class="subhead">Suggested actions by status</h3>
+        <p>Evaluate now = verified GA. Pilot = available preview. Watch = announced but not yet available, or status not specified.</p>
+        <div class="action-columns" id="action-columns"></div>
+
+        <h3 class="subhead">Where the announcements may matter</h3>
+        <p>Catalog items mapped to the seven areas of interest. Select an item to jump to it in the catalog.</p>
+        <div class="area-grid" id="area-grid"></div>
+      </div>
+    </section>
+
+    <section id="catalog" class="section" aria-labelledby="catalog-title">
+      <div class="wrap">
+        <h2 id="catalog-title">Complete announcement catalog</h2>
+        <p class="lede">Search and filter every cataloged announcement. Expand a card for technical details, prerequisites, discrepancies and supporting documentation.</p>
+
+        <form class="toolbar" id="toolbar" role="search" aria-label="Search and filter announcements" autocomplete="off">
           <div class="field field-search">
-            <label for="f-query">Search titles, descriptions and products <span class="hint">(press / to jump here)</span></label>
-            <input id="f-query" type="search" placeholder="For example: ontology, mirroring, capacity, Copy job" spellcheck="false">
+            <label for="f-query">Search titles, descriptions and products</label>
+            <input id="f-query" type="search" placeholder="For example: ontology, mirroring, capacity" spellcheck="false">
           </div>
           <div class="field">
             <label for="f-category">Workload</label>
@@ -94,16 +113,16 @@
             <select id="f-status"><option value="">All statuses</option></select>
           </div>
           <div class="field">
+            <label for="f-action">Suggested action</label>
+            <select id="f-action"><option value="">All actions</option></select>
+          </div>
+          <div class="field">
             <label for="f-assoc">Evidence tier</label>
             <select id="f-assoc">
               <option value="">All items</option>
               <option value="event">Event blog</option>
-              <option value="monthly">September update</option>
+              <option value="monthly">Monthly summary</option>
             </select>
-          </div>
-          <div class="field">
-            <label for="f-sort">Sort by</label>
-            <select id="f-sort"></select>
           </div>
           <div class="field field-check">
             <input id="f-conflict" type="checkbox">
@@ -112,17 +131,11 @@
           <div class="field field-buttons">
             <button type="reset" class="btn" id="reset-filters">Reset filters</button>
           </div>
-          <fieldset class="chips field-wide">
-            <legend>Suggested action</legend>
-            <div id="action-chips" class="chip-row"></div>
-          </fieldset>
         </form>
 
         <div class="results-bar">
           <p id="result-count" class="result-count" role="status" aria-live="polite"></p>
           <div class="view-controls">
-            <button type="button" class="btn btn-quiet" id="select-visible">Select all shown</button>
-            <button type="button" class="btn btn-quiet" id="clear-selection">Clear selection</button>
             <div class="segmented" role="group" aria-label="Catalog view">
               <button type="button" class="seg" id="view-cards" aria-pressed="true">Cards</button>
               <button type="button" class="seg" id="view-table" aria-pressed="false">Compact table</button>
@@ -132,35 +145,16 @@
           </div>
         </div>
 
-        <div id="focus-banner" class="focus-banner" hidden>
-          <p><strong id="focus-title">Discussion list</strong><span id="focus-sub"></span></p>
-          <div class="focus-actions">
-            <button type="button" class="btn btn-small" id="copy-md">Copy as Markdown</button>
-            <button type="button" class="btn btn-small" id="download-csv">Download CSV</button>
-            <button type="button" class="btn btn-small" id="copy-link">Copy share link</button>
-            <button type="button" class="btn btn-small" id="print-focus">Print this list</button>
-          </div>
-          <p class="small" id="notes-warning">Notes are saved only in this browser. The share link contains the selected item IDs, never your notes.</p>
-        </div>
-
         <div id="cards" class="cards" aria-label="Announcement cards"></div>
         <div id="table-wrap" class="table-wrap" tabindex="0" role="region" aria-label="Announcement comparison table (scrollable)"></div>
         <p id="empty-state" class="empty" hidden>No announcements match these filters. Try fewer filters or <button type="button" class="link-btn" id="empty-reset">reset all filters</button>.</p>
       </div>
     </section>
 
-    <section id="matters" class="section" aria-labelledby="matters-title">
-      <div class="wrap">
-        <h2 id="matters-title">Where the announcements may matter</h2>
-        <p>Catalog items mapped to seven areas of interest. Select an item to jump to its card in the catalog.</p>
-        <div class="area-grid" id="area-grid"></div>
-      </div>
-    </section>
-
     <section id="sources" class="section alt" aria-labelledby="sources-title">
       <div class="wrap">
         <h2 id="sources-title">Sources and methodology</h2>
-        <p><strong>Research cutoff:</strong> <span id="src-cutoff"></span>. <strong>Last verified:</strong> <span id="src-verified"></span>. <strong>Presentation:</strong> <span id="src-presentation"></span>. Only public information is used.</p>
+        <p><strong>Research cutoff:</strong> <span id="src-cutoff"></span>. <strong>Last verified:</strong> <span id="src-verified"></span>. Only public information is used.</p>
         <h3 class="subhead">Method</h3>
         <ul id="method-list"></ul>
 
@@ -175,15 +169,6 @@
           <table class="data-table" id="coverage-table"></table>
         </div>
 
-        <h3 class="subhead">September 2026 Fabric feature summary coverage</h3>
-        <p id="toc-intro"></p>
-        <details class="toc-details">
-          <summary>Show the section-by-section mapping</summary>
-          <div class="table-wrap" tabindex="0" role="region" aria-label="September summary mapping (scrollable)">
-            <table class="data-table" id="toc-table"></table>
-          </div>
-        </details>
-
         <h3 class="subhead">Known gaps and caveats</h3>
         <ul id="gaps-list"></ul>
 
@@ -193,17 +178,10 @@
     </section>
   </main>
 
-  <div id="select-bar" class="select-bar" role="region" aria-label="Selection" hidden>
-    <p class="select-count"><span id="select-count">0</span> selected</p>
-    <button type="button" class="btn btn-primary" id="focus-toggle" aria-pressed="false">Keep selected only</button>
-    <button type="button" class="btn" id="undo-remove" hidden>Undo removal</button>
-    <button type="button" class="btn btn-quiet" id="bar-clear">Clear</button>
-  </div>
-
   <footer class="site-footer">
     <div class="wrap">
       <p id="disclaimer-bottom"></p>
-      <p class="small">Prepared by Igor Dos Santos for a customer discussion. All content is derived from public Microsoft sources listed above. Product names are trademarks of their owners. This site is a briefing, not an official publication of Microsoft, Zurich Insurance Group or Farmers Insurance. <a href="../">Previous version</a>.</p>
+      <p class="small">Prepared by Igor Dos Santos for a customer discussion. All content is derived from public Microsoft sources listed above. Product names are trademarks of their owners. This site is a briefing, not an official publication of Microsoft or Farmers Insurance. <a href="../">Latest version</a>.</p>
     </div>
   </footer>
 

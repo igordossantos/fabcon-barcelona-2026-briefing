@@ -8,11 +8,11 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const data = JSON.parse(readFileSync(join(root, "data/announcements.json"), "utf8"));
-const dataV2 = JSON.parse(readFileSync(join(root, "v2/data/announcements.json"), "utf8"));
+const dataV1 = JSON.parse(readFileSync(join(root, "v1/data/announcements.json"), "utf8"));
 const BOT_BLOCKED_HOSTS = new Set(["community.fabric.microsoft.com", "blog.fabric.microsoft.com", "aka.ms"]);
 
 const urls = new Map();
-for (const d of [data, dataV2]) {
+for (const d of [data, dataV1]) {
   for (const s of d.sources) urls.set(s.url, `source ${s.id}`);
   for (const a of d.announcements) for (const [label, url] of a.docs) if (!urls.has(url)) urls.set(url, `doc in ${a.id}`);
 }

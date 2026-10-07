@@ -1,18 +1,28 @@
 # FabCon Barcelona 2026 | Data, Analytics & AI Briefing
 
-A curated briefing for Farmers Insurance on announcements associated with FabCon Europe / SQLCon Barcelona 2026 (September 28 – October 1, 2026).
+A curated briefing for Zurich Insurance Group and Farmers Insurance on announcements associated with FabCon Europe / SQLCon Barcelona 2026 (September 28 – October 1, 2026), including the September 2026 Microsoft Fabric feature summary.
 
 Presenter: Igor Dos Santos | Cloud and AI Solutions Engineer, Microsoft.
 
-This is a static website (HTML, CSS and JavaScript, no build step, no backend, no API keys). It is built from public Microsoft sources only. It is a curated briefing, **not** a contractual roadmap, availability commitment or licensing statement, and it is **not** an official Microsoft or Farmers Insurance publication.
+This is a static website (HTML, CSS and JavaScript, no build step, no backend, no API keys). It is built from public Microsoft sources only. It is a curated briefing, **not** a contractual roadmap, availability commitment or licensing statement, and it is **not** an official publication of Microsoft, Zurich Insurance Group or Farmers Insurance.
+
+## Versions
+
+| Version | URL path | Source folder |
+| --- | --- | --- |
+| **Current** (Zurich Insurance Group and Farmers Insurance; merged priorities and catalog; September 2026 Fabric coverage; live selection tools) | `/` | repository root (`index.html`, `css/`, `js/`, `data/`) |
+| **V1** (original Farmers Insurance briefing, kept unchanged) | `/v1/` | `v1/` |
 
 ## What is in the site
 
 - Executive overview and six recurring themes.
-- Priorities for Farmers Insurance: a ranked shortlist, suggested actions (Evaluate now / Pilot / Watch) and a mapping to seven areas of interest.
-- Complete announcement catalog with search, filters (workload, availability, suggested action, evidence tier, source discrepancy), a reset control, expandable technical details, a compact comparison table, and source links on every item.
+- One merged list of announcement cards. Priority items come first, then every other announcement by workload. Each card shows tags, availability and suggested action, potential relevance, suggested next step, sources and expandable technical details.
+- Search; filters for workload, availability, evidence tier, suggested action and source discrepancy; sort; reset; and a compact comparison table.
+- Live-meeting tools: **Select for discussion** checkboxes, a floating **Keep selected only** button, per-item notes, Undo, export to Markdown and CSV, a share link that restores a selection, a presenter view, filter chips with live counts, and the `/` and `f` keyboard shortcuts. Selections and notes are stored only in the browser (`localStorage`); share links contain item IDs only, never notes.
+- "Where the announcements may matter" below the catalog, mapping items to seven areas of interest.
+- Every section of the September 2026 Microsoft Fabric feature summary is cataloged as its own entry, or mapped to an existing entry when the sources describe items together. The mapping is stored in `meta.septemberToc` and shown in Sources and methodology.
 - Sources and methodology, coverage by workload, known gaps and preserved source discrepancies.
-- Print-friendly styling: printing produces a handout with the overview, priorities, compact table and sources.
+- Print-friendly styling: printing produces a handout with the overview, the table (with a notes column for selected items) and sources.
 
 All totals shown on the page are computed from `data/announcements.json` in the browser. Nothing is hardcoded.
 
@@ -65,21 +75,11 @@ npm run test:e2e         # search, filters, reset, expand/collapse, keyboard, re
 
 Research cutoff: October 6, 2026. See `docs/research-coverage-log.md` for sources reviewed, coverage and gaps.
 
-## Version 2 (`/v2/`)
+## V1 (`/v1/`)
 
-The original page at the repository root is unchanged. A second version lives in `v2/` and is published at `<site>/v2/`. It has its own `index.html`, `css/`, `js/` and `data/announcements.json`.
+The original Farmers Insurance briefing is kept unchanged in `v1/` with its own `index.html`, `css/`, `js/` and `data/announcements.json`, and is published at `<site>/v1/`. Its tests are in `tests/v1/` (`npm test` runs them; `npm run test:e2e:v1` runs its browser test, optionally against a deployed URL with `BASE_URL`). The current page's browser test is `npm run test:e2e`.
 
-What is different in v2:
-
-- Subtitle and wording address Zurich Insurance Group and Farmers Insurance; the hero no longer shows the presentation, cutoff and last-verified dates (they remain in Sources and methodology).
-- The Priorities and Catalog sections are merged into one list of cards. Priority items come first, then everything else; search, filter chips, selects and a sort control apply to the same cards.
-- "Where the announcements may matter" sits below the catalog.
-- Every section of the September 2026 Microsoft Fabric feature summary is cataloged as its own entry (or mapped to an existing entry when the sources describe items together). The mapping is stored in `meta.septemberToc` and shown in Sources and methodology.
-- Live-meeting tools: **Select for discussion** checkboxes, a floating **Keep selected only** button, per-item notes, Undo, export to Markdown and CSV, a share link that restores a selection, a presenter view, filter chips with live counts, and the `/` and `f` keyboard shortcuts. Selections and notes are stored only in the browser (`localStorage`); share links contain item IDs only, never notes.
-
-Tests for v2 are in `tests/v2/` (`npm test` runs them; `npm run test:e2e:v2` runs the browser test, optionally against a deployed URL with `BASE_URL`).
-
-Updating v2: edit `v2/data/announcements.json` as described below. When the September summary or Microsoft Learn changes, update the matching entry's `status`, `ver` and `septemberToc` mapping, then run `npm test`.
+Updating the current page: edit `data/announcements.json` as described below. When the September summary or Microsoft Learn changes, update the matching entry's `status`, `ver` and the `septemberToc` mapping, then run `npm test`.
 
 ## Updating the briefing
 
@@ -103,7 +103,7 @@ The site is published with GitHub Actions using the official Pages actions (`con
 gh api -X POST repos/<owner>/<repository>/pages -f build_type=workflow
 ```
 
-Only `index.html`, `css/`, `js/` and `data/` are published; tests, tools and docs stay in the repository.
+Only `index.html`, `css/`, `js/`, `data/` and `v1/` are published; tests, tools and docs stay in the repository.
 
 All asset paths are relative, so the site works on a project site such as `https://<user>.github.io/<repository>/`.
 

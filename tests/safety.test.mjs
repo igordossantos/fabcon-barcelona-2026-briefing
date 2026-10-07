@@ -65,12 +65,11 @@ test("confidential-content scan: no internal hosts, markers or local paths", () 
 });
 
 test("all external links in the dataset point to public Microsoft hosts", () => {
-  const data = JSON.parse(readFileSync(join(root, "data/announcements.json"), "utf8"));
   const allowed = [/(^|\.)microsoft\.com$/, /(^|\.)azure\.com$/];
-  const urls = [
-    ...data.sources.map((s) => s.url),
-    ...data.announcements.flatMap((a) => a.docs.map((d) => d[1])),
-  ];
+  const urls = ["data", "v1/data"].flatMap((d) => {
+    const data = JSON.parse(readFileSync(join(root, d, "announcements.json"), "utf8"));
+    return [...data.sources.map((s) => s.url), ...data.announcements.flatMap((a) => a.docs.map((x) => x[1]))];
+  });
   for (const u of urls) {
     const host = new URL(u).hostname;
     assert.ok(allowed.some((re) => re.test(host)), `unexpected host ${host} in ${u}`);
@@ -78,11 +77,13 @@ test("all external links in the dataset point to public Microsoft hosts", () => 
   }
 });
 
-test("site does not imply endorsement and carries the disclaimer", () => {
-  const html = readFileSync(join(root, "index.html"), "utf8");
-  const data = JSON.parse(readFileSync(join(root, "data/announcements.json"), "utf8"));
-  assert.match(data.meta.disclaimer, /not a contractual roadmap/i);
-  assert.match(data.meta.disclaimer, /not an official Microsoft or Farmers Insurance publication/i);
-  assert.match(html, /not an official publication of Microsoft or Farmers Insurance/i);
-  assert.ok(!/officially endorsed|endorsed by (Microsoft|Farmers)/i.test(html));
+test("sites do not imply endorsement and carry the disclaimer", () => {
+  for (const dir of ["", "v1"]) {
+    const html = readFileSync(join(root, dir, "index.html"), "utf8");
+    const data = JSON.parse(readFileSync(join(root, dir, "data/announcements.json"), "utf8"));
+    assert.match(data.meta.disclaimer, /not a contractual roadmap/i);
+    assert.match(data.meta.disclaimer, /not an official (publication of )?Microsoft(,| or) /i);
+    assert.match(html, /not an official publication of Microsoft(,| or) /i);
+    assert.ok(!/officially endorsed|endorsed by (Microsoft|Farmers|Zurich)/i.test(html));
+  }
 });
